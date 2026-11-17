@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "macros.html" import diff %}
+{% block title %}Compare · RepoBoss{% endblock %}
+{% block content %}
+<h1>Compare runs</h1>
+<p class="sub">Side-by-side values as recorded. A handful of attempts is descriptive, not a statistical result.</p>
+
+{% if missing %}<div class="notice warn">Unknown run ids ignored: <span class="mono">{{ missing | join(', ') }}</span></div>{% endif %}
+{% if mixed %}<div class="notice warn">These runs belong to different challenges; the comparison is not like for like.</div>{% endif %}
+{% if runs and runs | selectattr('agent_is_demo') | list %}
+<div class="notice demo">At least one run used a demo adapter: those values verify the pipeline only.</div>
+{% endif %}
+
+{% if runs | length < 2 %}
+<div class="empty">Select at least two runs to compare (tick them in a runs table, then press "Compare selected runs").</div>
+{% else %}
+<div class="table-wrap"><table>
+  <thead><tr><th></th>{% for r in runs %}<th class="mono"><a href="/runs/{{ r.id }}">{{ r.id }}</a></th>{% endfor %}</tr></thead>
+  <tbody>
+  {% for label, values in rows %}
+    <tr><th>{{ label }}</th>{% for v in values %}<td class="mono">{{ v }}</td>{% endfor %}</tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+
+<h2>Patches</h2>
+{% for rid, lines in patches %}
+<details {% if loop.first %}open{% endif %}><summary class="mono">{{ rid }}</summary>{{ diff(lines) }}</details>
+{% endfor %}
+{% endif %}
+{% endblock %}

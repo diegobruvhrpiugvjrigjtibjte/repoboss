@@ -1,0 +1,45 @@
+{% macro outcome(value) -%}
+{%- if value == 'passed' or value == 'accepted' -%}<span class="badge b-ok">{{ value }}</span>
+{%- elif value in ('running', None) -%}<span class="badge b-muted">{{ value or 'n/a' }}</span>
+{%- elif value in ('rejected', 'imported_unverified') -%}<span class="badge b-warn">{{ value }}</span>
+{%- else -%}<span class="badge b-bad">{{ value }}</span>{%- endif -%}
+{%- endmacro %}
+
+{% macro kind(run) -%}
+{%- if run.agent_is_demo -%}<span class="badge b-demo">DEMO</span>{%- else -%}<span class="badge b-muted">real agent</span>{%- endif -%}
+{%- if not run.runner_isolated %} <span class="badge b-warn">not isolated</span>{%- endif -%}
+{%- endmacro %}
+
+{% macro diff(lines) -%}
+{%- if lines -%}
+<div class="diff">{% for cls, line in lines %}<div class="{{ cls }}">{{ line }}</div>{% endfor %}</div>
+{%- else -%}
+<div class="empty">Empty patch: no allowed file was changed.</div>
+{%- endif -%}
+{%- endmacro %}
+
+{% macro runs_table(runs, selectable=False) -%}
+<div class="table-wrap"><table>
+  <thead><tr>
+    {% if selectable %}<th>Compare</th>{% endif %}
+    <th>Run</th><th>Challenge</th><th>Agent</th><th>Kind</th><th>Outcome</th>
+    <th>Tests P / F / E</th><th>Files</th><th>Seconds</th><th>Started</th>
+  </tr></thead>
+  <tbody>
+  {% for r in runs %}
+    <tr>
+      {% if selectable %}<td><input type="checkbox" name="run" value="{{ r.id }}" aria-label="select {{ r.id }}"></td>{% endif %}
+      <td class="mono"><a href="/runs/{{ r.id }}">{{ r.id }}</a></td>
+      <td class="mono"><a href="/challenges/{{ r.challenge_id }}">{{ r.challenge_id }}</a></td>
+      <td>{{ r.agent_name }}{% if r.agent_version %} <span class="sub">{{ r.agent_version }}</span>{% endif %}</td>
+      <td>{{ kind(r) }}</td>
+      <td>{{ outcome(r.outcome) }}</td>
+      <td class="mono">{{ fmt(r.tests_passed) }} / {{ fmt(r.tests_failed) }} / {{ fmt(r.tests_errors) }}</td>
+      <td class="mono">{{ fmt(r.files_changed) }}</td>
+      <td class="mono">{{ fmt(r.total_duration_s) }}</td>
+      <td class="mono">{{ r.created_at }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{%- endmacro %}

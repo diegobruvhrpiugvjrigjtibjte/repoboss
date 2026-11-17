@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ code }} · RepoBoss{% endblock %}
+{% block content %}
+<h1>{% if code == 404 %}Not found{% else %}Something went wrong ({{ code }}){% endif %}</h1>
+<div class="empty">{{ message }}<br><a href="/">Back to the overview</a></div>
+{% endblock %}

@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.repoboss/
+*.zip
+.env
+.env.*
+.DS_Store
+Thumbs.db
+
+# build outputs
+dist/
+windows/**/bin/
+windows/**/obj/
+macos/.build/
+macos/build/
+

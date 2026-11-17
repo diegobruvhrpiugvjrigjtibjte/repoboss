@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>RepoBoss</AssemblyName>
+    <RootNamespace>RepoBoss.Windows</RootNamespace>
+    <Version>0.2.0</Version>
+    <Product>RepoBoss</Product>
+    <Description>Native Windows interface for RepoBoss</Description>
+    <Copyright>The RepoBoss contributors, MIT License</Copyright>
+    <ApplicationIcon>repoboss.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="repoboss.ico" />
+  </ItemGroup>
+
+</Project>

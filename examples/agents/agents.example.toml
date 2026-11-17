@@ -1,0 +1,9 @@
+# Copy this table into your workspace's agents.toml (.repoboss/agents.toml) and fix agent_dir.
+[agents.custom]
+description = "Protocol skeleton: inspects the task, changes nothing"
+command = ["python", "{agent_dir}/skeleton_agent.py"]
+agent_dir = "examples/agents"   # relative paths are resolved against the agents.toml folder
+version = "0.1.0"
+pass_env = []
+network = false
+timeout_s = 120

@@ -1,0 +1,11 @@
+[repoboss]
+name = "shopcalc-c"
+install = []
+# Compiled in every fresh tree before testing; a compile error is never counted as a test failure.
+build = [["cmake", "-S", ".", "-B", "build", "-G", "Ninja"], ["cmake", "--build", "build"]]
+test = ["ctest", "--test-dir", "build", "--output-on-failure"]
+test_framework = "ctest"
+editable = ["src/**", "include/**"]
+source = ["src/**", "include/**"]
+timeout_s = 120
+docker_image = "gcc:14"

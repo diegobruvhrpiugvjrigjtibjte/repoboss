@@ -1,0 +1,6 @@
+[
+  {"sku": "PEN", "price": 1.5},
+  {"sku": "NOTEBOOK", "price": 4.0},
+  {"sku": "BACKPACK", "price": 35.0},
+  {"sku": "LAMP", "price": 20.0}
+]

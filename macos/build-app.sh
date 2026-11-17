@@ -1,0 +1,25 @@
+#!/bin/sh
+# Builds RepoBoss.app from the Swift package (run on a Mac with Xcode 15+ or the Swift 5.9 toolchain).
+set -eu
+cd "$(dirname "$0")"
+swift build -c release
+APP=build/RepoBoss.app
+rm -rf "$APP"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+cp "$(swift build -c release --show-bin-path)/RepoBossMac" "$APP/Contents/MacOS/RepoBoss"
+cat > "$APP/Contents/Info.plist" <<'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key><string>RepoBoss</string>
+  <key>CFBundleIdentifier</key><string>io.github.repoboss.mac</string>
+  <key>CFBundleExecutable</key><string>RepoBoss</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleShortVersionString</key><string>0.2.0</string>
+  <key>LSMinimumSystemVersion</key><string>13.0</string>
+  <key>NSHighResolutionCapable</key><true/>
+</dict>
+</plist>
+PLIST
+echo "Built $APP (unsigned: right-click > Open the first time)."

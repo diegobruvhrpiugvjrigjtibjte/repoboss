@@ -1,0 +1,32 @@
+﻿<!doctype html>
+<html><head><meta charset="utf-8"><style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { width: 1600px; height: 470px; background: #0a0d11; font-family: "Segoe UI", system-ui, sans-serif; color: #e8edf3; padding: 54px 60px; }
+  h2 { font-size: 30px; font-weight: 750; letter-spacing: -.4px; }
+  p.lead { color: #9aa7b6; font-size: 18px; margin-top: 8px; }
+  .row { display: flex; align-items: stretch; gap: 0; margin-top: 46px; }
+  .step { flex: 1; background: #12171d; border: 1px solid #263039; border-radius: 16px; padding: 22px 20px; position: relative; }
+  .n { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-weight: 800; color: #0a0d11; background: linear-gradient(135deg, #5aa8ff, #b46bff); }
+  .step h3 { font-size: 20px; margin-top: 16px; }
+  .step p { font-size: 15px; color: #9aa7b6; line-height: 1.5; margin-top: 8px; }
+  .arrow { width: 44px; display: grid; place-items: center; color: #4b5a6a; font-size: 30px; }
+  .checks { margin-top: 10px; font-family: "Cascadia Mono", Consolas, monospace; font-size: 13.5px; line-height: 1.7; }
+  .ok { color: #4fd18b; } .bad { color: #ff7b72; } .acc { color: #7cb7ff; }
+  .step.hl { border-color: rgba(124,108,255,.55); box-shadow: 0 0 0 1px rgba(124,108,255,.25), 0 20px 60px rgba(124,108,255,.12); }
+</style></head><body>
+<h2>How a challenge is born and judged</h2>
+<p class="lead">Every number RepoBoss reports comes from running your real test suite. Nothing is estimated.</p>
+<div class="row">
+  <div class="step"><div class="n">1</div><h3>Snapshot</h3><p>Read-only, content-addressed copy of your repo. Secrets, symlinks and caches are left out.</p></div>
+  <div class="arrow">&rsaquo;</div>
+  <div class="step"><div class="n">2</div><h3>Inject a bug</h3><p>Located on the syntax tree (tree-sitter / ast): a constant, a file reference or a boundary condition.</p></div>
+  <div class="arrow">&rsaquo;</div>
+  <div class="step hl"><div class="n">3</div><h3>Prove it</h3>
+    <div class="checks"><span class="ok">original &#10003; passes</span><br><span class="bad">with bug &#10007; tests fail</span><br><span class="ok">restored &#10003; passes</span></div>
+    <p>Compile errors don't count.</p></div>
+  <div class="arrow">&rsaquo;</div>
+  <div class="step"><div class="n">4</div><h3>Agent attempts</h3><p>Tests hidden, configs read-only, isolated runner with no network. Any agent: Ollama, OpenAI-compatible, your own tool.</p></div>
+  <div class="arrow">&rsaquo;</div>
+  <div class="step hl"><div class="n">5</div><h3>Judge</h3><p>Only allowed changes go into a clean tree with the protected tests. Patch, tokens, time and outcome are recorded.</p></div>
+</div>
+</body></html>

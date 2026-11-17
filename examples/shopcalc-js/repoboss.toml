@@ -1,0 +1,9 @@
+[repoboss]
+name = "shopcalc-js"
+install = []
+test = ["node", "--test"]
+test_framework = "node"
+editable = ["src/**"]
+source = ["src/**"]
+timeout_s = 60
+docker_image = "node:22-slim"

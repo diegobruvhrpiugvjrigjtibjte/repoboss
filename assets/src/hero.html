@@ -1,0 +1,56 @@
+﻿<!doctype html>
+<html><head><meta charset="utf-8"><style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { width: 1600px; height: 720px; overflow: hidden; background: #07090c; font-family: "Segoe UI", system-ui, sans-serif; color: #e8edf3; position: relative; }
+  .glow1 { position: absolute; width: 900px; height: 900px; left: -260px; top: -380px; background: radial-gradient(circle, rgba(90,168,255,.35), transparent 62%); }
+  .glow2 { position: absolute; width: 900px; height: 900px; right: -300px; bottom: -480px; background: radial-gradient(circle, rgba(193,91,255,.33), transparent 62%); }
+  .grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(ellipse at 40% 45%, black 30%, transparent 78%); }
+  .wrap { position: relative; display: grid; grid-template-columns: 640px 1fr; gap: 56px; padding: 64px 80px; height: 100%; }
+  .brand { display: flex; align-items: center; gap: 22px; }
+  .brand img { width: 104px; height: 104px; filter: drop-shadow(0 18px 40px rgba(124,108,255,.45)); }
+  .brand h1 { font-size: 86px; font-weight: 800; letter-spacing: -2px; }
+  .tag { margin-top: 30px; font-size: 40px; line-height: 1.18; font-weight: 700; letter-spacing: -.6px; }
+  .tag span { background: linear-gradient(90deg, #6fb6ff, #a98bff 55%, #e07bff); -webkit-background-clip: text; color: transparent; }
+  .sub { margin-top: 22px; font-size: 21px; line-height: 1.5; color: #a7b3c2; max-width: 600px; }
+  .chips { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; max-width: 620px; }
+  .chip { padding: 8px 14px; border-radius: 999px; font-size: 16px; font-weight: 600; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.05); color: #d7dee7; }
+  .chip.on { border-color: rgba(79,209,139,.5); color: #8ff0bb; background: rgba(79,209,139,.10); }
+  .term { align-self: center; border-radius: 16px; background: rgba(13,17,22,.92); border: 1px solid rgba(255,255,255,.10); box-shadow: 0 40px 120px rgba(0,0,0,.6), 0 0 0 1px rgba(124,108,255,.12); overflow: hidden; }
+  .bar { display: flex; gap: 8px; padding: 14px 16px; background: rgba(255,255,255,.04); border-bottom: 1px solid rgba(255,255,255,.07); align-items: center; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .bar b { margin-left: 12px; font-weight: 500; font-size: 14px; color: #8b97a7; }
+  pre { font-family: "Cascadia Mono", Consolas, monospace; font-size: 15.5px; line-height: 1.62; padding: 20px 24px 24px; color: #cfd8e3; white-space: pre; }
+  .p { color: #7cb7ff; } .ok { color: #4fd18b; } .m { color: #7c8899; } .w { color: #f2c14e; } .v { color: #c39bff; }
+</style></head><body>
+<div class="glow1"></div><div class="glow2"></div><div class="grid"></div>
+<div class="wrap">
+  <div>
+    <div class="brand"><img src="../logo.png" alt=""><h1>RepoBoss</h1></div>
+    <div class="tag">Put AI coding agents to the test.<br><span>On your own code. Verifiably.</span></div>
+    <div class="sub">Injects real bugs into your repository, hides the tests, lets an AI agent try to fix them, and checks every change against the protected test suite.</div>
+    <div class="chips">
+      <div class="chip on">Python</div><div class="chip on">JavaScript</div><div class="chip on">Rust</div><div class="chip on">C#</div><div class="chip on">C</div>
+      <div class="chip">TypeScript</div><div class="chip">Java</div><div class="chip">Go</div><div class="chip">C++</div><div class="chip">Kotlin</div><div class="chip">Ruby</div><div class="chip">PHP</div><div class="chip">Swift</div>
+    </div>
+  </div>
+  <div class="term">
+    <div class="bar"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div><b>repoboss &mdash; real session</b></div>
+<pre><span class="p">$</span> repoboss challenge create --repo examples/shopcalc-rs
+snapshot 9a2431be67ef9122  <span class="m">(8 files; original repository untouched)</span>
+<span class="ok">[accepted]</span> ch-df7293fd  config_value: src/settings.rs     <span class="m">(2 failing tests)</span>
+<span class="ok">[accepted]</span> ch-60427357  path_reference: src/catalog.rs    <span class="m">(7 failing tests)</span>
+<span class="ok">[accepted]</span> ch-1246610d  logic_condition: src/pricing.rs   <span class="m">(2 failing tests)</span>
+
+<span class="p">$</span> repoboss run ch-60427357 --agent qwen --attempts 2
+run-a8995115  <span class="ok">passed</span>   attempt=completed  passed=13 failed=0 errors=0
+run-55899e6c  <span class="ok">passed</span>   attempt=completed  passed=13 failed=0 errors=0
+2/2 attempt(s) passed the protected tests.
+
+<span class="p">$</span> repoboss compare --challenge ch-60427357
+AGENT  VERSION                 RUNNER  ATTEMPTS  PASSED  RATE
+qwen   <span class="v">qwen3:14b@bdbd181c33f2</span>  local   2         2       100%
+<span class="w">qwen: 2 attempt(s): too few to draw statistical conclusions.</span></pre>
+  </div>
+</div>
+</body></html>
+

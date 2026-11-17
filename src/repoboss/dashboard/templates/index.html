@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "macros.html" import outcome, runs_table %}
+{% block content %}
+<h1>Challenges and runs</h1>
+<p class="sub">Results describe these challenges in this environment. They are not a general ranking of models.</p>
+
+<h2>Challenges</h2>
+{% if challenges %}
+<div class="table-wrap"><table>
+  <thead><tr><th>ID</th><th>Name</th><th>Transformation</th><th>Status</th><th>Trusted</th><th>Runner</th><th>Runs</th><th>Created</th></tr></thead>
+  <tbody>
+  {% for c in challenges %}
+    <tr>
+      <td class="mono"><a href="/challenges/{{ c.id }}">{{ c.id }}</a></td>
+      <td>{{ c.name }}</td>
+      <td class="mono">{{ c.transform }}</td>
+      <td>{{ outcome(c.status) }}</td>
+      <td>{% if c.trusted %}yes{% else %}<span class="badge b-warn">no, imported</span>{% endif %}</td>
+      <td>{{ c.runner or '-' }}</td>
+      <td class="mono">{{ run_counts.get(c.id, 0) }}</td>
+      <td class="mono">{{ c.created_at }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% else %}
+<div class="empty">
+  No challenges yet.<br>
+  Create one with <code>repoboss challenge create --repo PATH</code>, or try the bundled example:
+  <code>repoboss challenge create --repo examples/shopcalc --runner local</code>
+</div>
+{% endif %}
+
+<h2>Recent runs</h2>
+{% if runs %}
+<form action="/compare" method="get">
+  {{ runs_table(runs, selectable=True) }}
+  <p><button type="submit">Compare selected runs</button></p>
+</form>
+{% else %}
+<div class="empty">No runs yet. Start one with <code>repoboss run CHALLENGE_ID --agent demo-oracle</code>.</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,7 @@
+"""Business rules, in one place."""
+
+TAX_RATE = 0.22
+FREE_SHIPPING_THRESHOLD = 50
+SHIPPING_FEE = 4.9
+BULK_MIN_QUANTITY = 10
+BULK_DISCOUNT = 0.1

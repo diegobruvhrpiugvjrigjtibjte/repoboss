@@ -1,0 +1,11 @@
+[repoboss]
+name = "shopcalc-rs"
+install = []
+test = ["cargo", "test"]
+test_framework = "cargo"
+editable = ["src/**"]
+source = ["src/**"]
+# Compiled dependencies and artifacts are cached per environment instead of per tree.
+env = { CARGO_TARGET_DIR = "{cache}/target", CARGO_TERM_COLOR = "never" }
+timeout_s = 300
+docker_image = "rust:1-slim"

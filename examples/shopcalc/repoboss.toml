@@ -1,0 +1,17 @@
+# RepoBoss configuration for the demo repository.
+[repoboss]
+name = "shopcalc"
+# Dependencies are installed once per environment (network allowed only during this step).
+install = [["python", "-m", "pip", "install", "pytest>=8,<10"]]
+# Test command as an argv list (never a shell string). "python" resolves to the environment's interpreter.
+test = ["python", "-m", "pytest", "-q"]
+test_framework = "pytest"
+# Removed from the agent's copy, restored from the snapshot for evaluation.
+hidden = ["tests/**"]
+# Visible to the agent but read-only.
+protected = ["repoboss.toml", "pyproject.toml"]
+# Only changes under these paths are transferred to the evaluation.
+editable = ["src/**"]
+# Where bugs may be injected.
+source = ["src/*.py"]
+timeout_s = 60

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% from "macros.html" import outcome, runs_table, diff %}
+{% block title %}{{ c.id }} · RepoBoss{% endblock %}
+{% block content %}
+<h1>{{ c.name }} {{ outcome(c.status) }}</h1>
+<p class="sub mono">{{ c.id }}</p>
+
+{% if not c.trusted %}
+<div class="notice warn">Imported challenge, never executed on this machine. Review it, then run
+  <code>repoboss challenge verify {{ c.id }} --trust</code>.</div>
+{% endif %}
+
+<div class="grid">
+  <div class="panel">
+    <dl class="kv">
+      <dt>Transformation</dt><dd class="mono">{{ c.transform }}</dd>
+      <dt>Seed</dt><dd class="mono">{{ c.seed }}</dd>
+      <dt>Status detail</dt><dd>{{ c.status_detail or '-' }}</dd>
+      <dt>Verified</dt><dd class="mono">{{ c.verified_at or 'never' }}</dd>
+      <dt>Runner</dt><dd>{{ c.runner or '-' }}</dd>
+    </dl>
+  </div>
+  <div class="panel">
+    <dl class="kv">
+      <dt>Snapshot</dt><dd class="mono">{{ c.snapshot_hash[:16] }}…</dd>
+      <dt>Environment</dt><dd class="mono">{{ (c.env or {}).get('image') or (c.env or {}).get('python') or 'n/a' }}</dd>
+      <dt>Image id</dt><dd class="mono">{{ (c.env or {}).get('image_id') or 'n/a' }}</dd>
+      <dt>Python</dt><dd class="mono">{{ (c.env or {}).get('python_version') or 'n/a' }}</dd>
+      <dt>Source repo</dt><dd class="mono">{{ c.source_repo or c.imported_from or '-' }}</dd>
+    </dl>
+  </div>
+</div>
+
+<h2>Configuration</h2>
+<div class="panel"><dl class="kv">
+  <dt>Install</dt><dd class="mono">{{ c.config.install }}</dd>
+  {% if c.config.get('build') %}<dt>Build</dt><dd class="mono">{{ c.config.build }}</dd>{% endif %}
+  <dt>Test</dt><dd class="mono">{{ c.config.test }} ({{ c.config.get('test_framework', 'auto') }})</dd>
+  <dt>Hidden from agent</dt><dd class="mono">{{ (c.config.get('hidden') or []) | join(', ') }}</dd>
+  <dt>Read-only</dt><dd class="mono">{{ c.config.protected | join(', ') }}</dd>
+  <dt>Editable</dt><dd class="mono">{{ c.config.editable | join(', ') }}</dd>
+  <dt>Time limit</dt><dd class="mono">{{ c.config.timeout_s }} s per test run</dd>
+</dl></div>
+
+<h2>Verification</h2>
+{% set v = c.verification %}
+{% if v %}
+<div class="table-wrap"><table>
+  <thead><tr><th>Check</th><th>Status</th><th>Passed</th><th>Failed</th><th>Errors</th><th>Seconds</th></tr></thead>
+  <tbody>
+  {% for label in ['original', 'broken', 'restored'] %}{% set rep = v.get(label) %}
+    <tr><td>{{ label }}</td>
+      {% if rep %}<td>{{ outcome(rep.status) }}</td><td class="mono">{{ fmt(rep.passed) }}</td><td class="mono">{{ fmt(rep.failed) }}</td>
+      <td class="mono">{{ fmt(rep.errors) }}</td><td class="mono">{{ fmt(rep.duration_s) }}</td>
+      {% else %}<td colspan="5" class="sub">not run</td>{% endif %}</tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% if v.broken and v.broken.failing %}
+<p class="sub">Tests failing with the bug: <span class="mono">{{ v.broken.failing | join(', ') }}</span></p>
+{% endif %}
+{% else %}
+<div class="empty">Not verified on this machine yet.</div>
+{% endif %}
+
+<details>
+  <summary>Reveal the injected bug (spoiler: this is the reference fix in reverse)</summary>
+  <p>{{ cand.description }} — <span class="mono">{{ cand.path }}:{{ cand.line }}</span>
+    {% if cand.metadata.get('language') %}<span class="badge b-muted">{{ cand.metadata.language }}</span>{% endif %}</p>
+  {{ diff(bug_diff) }}
+</details>
+
+<h2>Attempts by agent</h2>
+{% if stats %}
+<div class="table-wrap"><table>
+  <thead><tr><th>Agent</th><th>Version</th><th>Runner</th><th>Kind</th><th>Attempts</th><th>Passed</th><th>Rate</th><th>Median s</th><th>Outcomes</th></tr></thead>
+  <tbody>
+  {% for s in stats %}
+    <tr>
+      <td>{{ s.agent }}</td><td class="mono">{{ s.version or 'n/a' }}</td><td>{{ s.runner }}</td>
+      <td>{% if s.is_demo %}<span class="badge b-demo">DEMO</span>{% else %}<span class="badge b-muted">real agent</span>{% endif %}</td>
+      <td class="mono">{{ s.attempts }}</td><td class="mono">{{ s.passed }}</td>
+      <td class="mono">{{ '%.0f' % (s.success_rate * 100) }}%</td>
+      <td class="mono">{{ fmt(s.median_duration_s) }}</td>
+      <td class="wrap mono">{% for k, n in s.outcomes.items() %}{{ k }}: {{ n }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% for agent, note in notes.items() if note %}<p class="sub">{{ agent }}: {{ note }}</p>{% endfor %}
+{% else %}
+<div class="empty">No runs for this challenge yet. Try <code>repoboss run {{ c.id }} --agent demo-oracle</code>.</div>
+{% endif %}
+
+{% if runs %}
+<h2>Runs</h2>
+<form action="/compare" method="get">
+  {{ runs_table(runs, selectable=True) }}
+  <p><button type="submit">Compare selected runs</button></p>
+</form>
+{% endif %}
+{% endblock %}

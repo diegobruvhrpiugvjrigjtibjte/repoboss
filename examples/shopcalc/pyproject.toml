@@ -1,0 +1,9 @@
+[project]
+name = "shopcalc"
+version = "1.0.0"
+description = "Tiny order-pricing library used as the RepoBoss demo repository."
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

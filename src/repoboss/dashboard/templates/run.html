@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "macros.html" import outcome, kind, diff %}
+{% block title %}{{ r.id }} · RepoBoss{% endblock %}
+{% block content %}
+<h1>Run {{ r.id }} {{ outcome(r.outcome) }}</h1>
+<p class="sub">Challenge <a class="mono" href="/challenges/{{ r.challenge_id }}">{{ r.challenge_id }}</a> · attempt {{ r.attempt }} · {{ kind(r) }}</p>
+
+{% if r.agent_is_demo %}
+<div class="notice demo"><strong>Demonstration data.</strong> This run used the built-in {{ r.agent_name }} adapter. It checks
+  that the RepoBoss pipeline works and does not measure the ability of any model.</div>
+{% endif %}
+{% if not r.runner_isolated %}
+<div class="notice warn">Local runner: this attempt ran as a normal process on the host, without network, CPU or memory isolation.</div>
+{% endif %}
+{% if r.outcome == 'passed' %}
+<div class="notice info">{{ disclaimer }}</div>
+{% endif %}
+{% if r.violations %}
+<div class="notice warn"><strong>Rejected before evaluation.</strong>
+  <ul>{% for v in r.violations %}<li class="mono">{{ v }}</li>{% endfor %}</ul></div>
+{% endif %}
+
+<h2>Results</h2>
+<div class="table-wrap"><table class="results"><tbody>
+  {% for label, values in rows %}<tr><th>{{ label }}</th><td class="mono">{{ values[0] }}</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="sub">"n/a" means the value was not available from a measurable source; it is never replaced by zero.</p>
+
+{% if r.failing_tests %}
+<h2>Failing tests</h2>
+<div class="panel mono">{% for t in r.failing_tests %}<div>{{ t }}</div>{% endfor %}</div>
+{% endif %}
+
+{% if r.ignored %}
+<h2>Ignored changes</h2>
+<p class="sub">Outside the editable paths: reported but not transferred to the evaluation.</p>
+<div class="panel mono">{% for p in r.ignored %}<div>{{ p }}</div>{% endfor %}</div>
+{% endif %}
+
+{% if r.notes %}
+<h2>Notes</h2>
+<div class="panel">{% for line in r.notes.split('\n') %}<div>{{ line }}</div>{% endfor %}</div>
+{% endif %}
+
+<h2>Final patch</h2>
+{{ diff(patch) }}
+
+<h2>Logs</h2>
+<details open><summary>Agent log</summary>
+  {% if agent_log is not none %}<pre class="block">{{ agent_log or '(empty)' }}</pre>{% else %}<div class="empty">No agent log recorded.</div>{% endif %}
+</details>
+<details><summary>Evaluation log</summary>
+  {% if eval_log is not none %}<pre class="block">{{ eval_log or '(empty)' }}</pre>{% else %}<div class="empty">No evaluation was run (see status above).</div>{% endif %}
+</details>
+<details><summary>Environment preparation log</summary>
+  {% if prepare_log is not none %}<pre class="block">{{ prepare_log or '(empty)' }}</pre>{% else %}<div class="empty">No preparation log.</div>{% endif %}
+</details>
+{% endblock %}

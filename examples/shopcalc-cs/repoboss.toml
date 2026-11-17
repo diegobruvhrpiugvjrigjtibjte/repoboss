@@ -1,0 +1,9 @@
+[repoboss]
+name = "shopcalc-cs"
+install = [["dotnet", "restore", "Shopcalc.Tests/Shopcalc.Tests.csproj"]]
+test = ["dotnet", "test", "Shopcalc.Tests/Shopcalc.Tests.csproj", "--nologo"]
+test_framework = "dotnet"
+editable = ["Shopcalc/**"]
+source = ["Shopcalc/**"]
+timeout_s = 300
+docker_image = "mcr.microsoft.com/dotnet/sdk:8.0"
