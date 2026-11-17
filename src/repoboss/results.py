@@ -317,10 +317,11 @@ def parse_phpunit(text: str) -> Counts | None:
 
 
 def parse_ctest(text: str) -> Counts | None:
-    m = _last(r"(\d+)% tests passed, (\d+) tests? failed out of (\d+)", text)
+    # "92% tests passed, 1 tests failed out of 13"; newer CTest prints "100% tests passed out of 13".
+    m = _last(r"(\d+)% tests passed(?:, (\d+) tests? failed)? out of (\d+)", text)
     if not m:
         return None
-    fail, total = int(m.group(2)), int(m.group(3))
+    fail, total = int(m.group(2) or 0), int(m.group(3))
     c = Counts(passed=total - fail, failed=fail, source="ctest")
     c.failing = re.findall(r"^\s*\d+ - (\S+) \((?:Failed|SEGFAULT|Timeout|Exception)\)", text, re.M)
     return c

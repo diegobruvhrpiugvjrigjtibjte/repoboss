@@ -17,11 +17,17 @@ list; there is never a shell in between.
 
 ## Install
 
-1. Install Python 3.12+ and RepoBoss: `pip install git+https://github.com/diegobruvhrpiugvjrigjtibjte/repoboss`.
-2. Install the [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0).
-3. Download `RepoBoss-Windows-x64.zip` from the releases page, extract it and run `RepoBoss.exe`.
-4. In **Settings**, check the RepoBoss command (`repoboss.exe` is found on PATH automatically) and
-   choose or create a workspace.
+1. Install the [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) and
+   [Python 3.12+](https://www.python.org/downloads/) (tick "Add to PATH").
+2. Download `RepoBoss-Windows-x64.zip` from the releases page, extract it and run `RepoBossApp.exe`.
+3. In **Settings**, press **Install RepoBoss CLI (pip)**. This installs the engine. If you already
+   installed it with pip, `repoboss.exe` is found automatically.
+4. Press **Create workspace**, then go to **New challenge**.
+
+The app never runs itself as the RepoBoss command:
+- it ignores its own folder when looking for `repoboss.exe`;
+- it exits immediately if started with command-line arguments;
+- only one window can be open at a time.
 
 ## Build from source
 

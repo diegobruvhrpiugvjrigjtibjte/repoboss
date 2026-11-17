@@ -65,7 +65,10 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/Scripts/python.exe 
 
 - **Windows (WPF, .NET 8):**
   - build: `dotnet publish windows/RepoBoss.Windows -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o dist/windows`;
-  - screenshot mode: `RepoBoss.exe --home DIR --command PATH --page Runs --screenshot out.png`.
+  - screenshot mode: `RepoBossApp.exe --home DIR --command PATH --page Runs --screenshot out.png`.
+  - **The exe must never be named `repoboss.exe`.** Windows resolves the `repoboss` command to the app
+    folder first, so the app launched itself recursively (a fork bomb, fixed in 0.2.1). Guards now in
+    place: own folder excluded, CLI-style args make the app exit, single-instance mutex.
 - **macOS (SwiftUI):** `macos/build-app.sh`. Never compiled; it needs a Mac.
 - **Desktop (Python):** `repoboss gui [--page NAME]`.
 - **Terminal:** `repoboss interactive`.

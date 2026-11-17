@@ -424,7 +424,7 @@ def docker_available() -> tuple[bool, str]:
         return False, "docker executable not found on PATH"
     try:
         proc = subprocess.run(
-            ["docker", "version", "--format", "{{.Server.Version}}"],
+            ["docker", "version", "--format", "{{.Server.Version}} {{.Server.Os}}"],
             capture_output=True,
             text=True,
             timeout=20,
@@ -435,7 +435,10 @@ def docker_available() -> tuple[bool, str]:
     if proc.returncode != 0:
         message = (proc.stderr or proc.stdout).strip()
         return False, message.splitlines()[-1] if message else "docker daemon not reachable"
-    return True, f"Docker server {proc.stdout.strip()}"
+    version, _, engine_os = proc.stdout.strip().partition(" ")
+    if engine_os and engine_os != "linux":
+        return False, f"Docker {version} runs {engine_os} containers; switch to Linux containers"
+    return True, f"Docker server {version}"
 
 
 def render_dockerfile(base_image: str, install: Sequence[Sequence[str]], dependency_dirs: Sequence[str] = ()) -> str:
@@ -457,6 +460,10 @@ def render_dockerfile(base_image: str, install: Sequence[Sequence[str]], depende
         find += ["!", "-path", f"{CONTAINER_WORKSPACE}/{dep}/*"]
     find += ["-delete"]
     lines.append(f"RUN {json.dumps(find)}")
+    # Then the directories left empty (e.g. tests/): not even their names stay visible.
+    lines.append(
+        f"RUN {json.dumps(['find', CONTAINER_WORKSPACE, '-mindepth', '1', '-type', 'd', '-empty', '-delete'])}"
+    )
     lines.append(f"RUN {json.dumps(['mkdir', '-p', CONTAINER_OUTPUT, CONTAINER_AGENT, CONTAINER_CACHE])}")
     return "\n".join(lines) + "\n"
 

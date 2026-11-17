@@ -232,6 +232,7 @@
               <Button Style="{StaticResource Btn}" Content="Create workspace (docker)" Click="InitDocker_Click"/>
               <Button Style="{StaticResource Btn}" Content="Create workspace (local)" Click="InitLocal_Click"/>
               <Button Style="{StaticResource Btn}" Content="Doctor" Click="Doctor_Click"/>
+              <Button Style="{StaticResource Btn}" Content="Install RepoBoss CLI (pip)" Click="InstallCli_Click"/>
             </WrapPanel>
             <DockPanel Margin="0,0,0,6">
               <Button DockPanel.Dock="Right" Style="{StaticResource Btn}" Content="Save agents.toml" Click="SaveAgents_Click"/>

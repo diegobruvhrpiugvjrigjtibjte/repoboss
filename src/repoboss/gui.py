@@ -270,7 +270,9 @@ class App:
         self.log.delete("1.0", "end")
         _put(self.log, "$ repoboss " + " ".join(args) + "\n", "muted")
         env = dict(os.environ, PYTHONIOENCODING="utf-8", NO_COLOR="1", TERM="dumb", COLUMNS="160")
-        flags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
+        flags = 0
+        if sys.platform == "win32":
+            flags = subprocess.CREATE_NO_WINDOW
         self.proc = subprocess.Popen(
             argv,
             stdout=subprocess.PIPE,

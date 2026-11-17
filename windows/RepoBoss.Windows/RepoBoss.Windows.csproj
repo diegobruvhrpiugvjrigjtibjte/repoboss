@@ -6,9 +6,10 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>RepoBoss</AssemblyName>
+    <!-- Not "RepoBoss": Windows resolves the "repoboss" CLI command to an exe with that name in the app folder. -->
+    <AssemblyName>RepoBossApp</AssemblyName>
     <RootNamespace>RepoBoss.Windows</RootNamespace>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <Product>RepoBoss</Product>
     <Description>Native Windows interface for RepoBoss</Description>
     <Copyright>The RepoBoss contributors, MIT License</Copyright>

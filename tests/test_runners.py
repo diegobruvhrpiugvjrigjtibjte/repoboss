@@ -136,6 +136,7 @@ def test_dockerfile_uses_exec_form_and_keeps_only_dependencies() -> None:
     find = json.loads(find_line[4:])
     assert find[:4] == ["find", "/workspace", "-mindepth", "1"]
     assert find[-4:-1] == ["!", "-path", "/workspace/node_modules/*"] and find[-1] == "-delete"
+    assert 'RUN ["find", "/workspace", "-mindepth", "1", "-type", "d", "-empty", "-delete"]' in text
     with pytest.raises(ValueError):
         render_dockerfile("python:3.12\nRUN curl evil", [])
     for line in text.splitlines():
@@ -197,7 +198,8 @@ def test_full_pipeline_in_docker(demo_repo: Path, ws: Workspace, tmp_path: Path)
     (agent_dir / "probe.py").write_text(
         "import json, os, pathlib, socket\n"
         "out = pathlib.Path(os.environ['REPOBOSS_OUTPUT_DIR'])\n"
-        "result = {'tests_visible': pathlib.Path('/workspace/tests').exists()}\n"
+        "result = {'tests_visible': pathlib.Path('/workspace/tests').exists()\n"
+        "          or any(p.name.startswith('test_') for p in pathlib.Path('/workspace').rglob('*.py'))}\n"
         "try:\n"
         "    socket.create_connection(('1.1.1.1', 53), timeout=3); result['network'] = True\n"
         "except OSError:\n"

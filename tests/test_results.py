@@ -75,6 +75,11 @@ def test_node_tap_format_and_failing_names() -> None:
     assert counts is not None and counts.failed == 1 and counts.failing == ["bulk discount"]
 
 
+def test_ctest_all_passed_short_format() -> None:
+    counts = PARSERS["ctest"]("100% tests passed out of 13\n\nTotal Test time (real) =   0.18 sec\n")
+    assert counts is not None and (counts.passed, counts.failed) == (13, 0)
+
+
 def test_dotnet_new_summary_format() -> None:
     counts = PARSERS["dotnet"]("Test summary: total: 13, failed: 2, succeeded: 11, skipped: 0, duration: 1s\n")
     assert counts is not None and (counts.passed, counts.failed) == (11, 2)

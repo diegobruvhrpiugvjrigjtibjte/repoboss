@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "repoboss"
-version = "0.2.0"
+version = "0.2.1"
 description = "Create verifiable code-repair challenges from your own repositories, in many languages, and put AI coding agents to the test."
 readme = "README.md"
 license = "MIT"

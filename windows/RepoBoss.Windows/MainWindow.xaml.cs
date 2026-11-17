@@ -37,10 +37,11 @@ public partial class MainWindow : Window
     public MainWindow(string? home, string? page, string? screenshot, string? commandOverride = null)
     {
         InitializeComponent();
-        var command = commandOverride ?? _settings.Command ?? Backend.DetectCommand();
+        var command = commandOverride ?? _settings.Command ?? Backend.DetectCommand() ?? "";
         var ws = home ?? _settings.Home ?? Path.Combine(Environment.CurrentDirectory, ".repoboss");
         _backend = new Backend(command, ws);
         _screenshot = screenshot;
+        if (string.IsNullOrEmpty(command)) page ??= "Settings";
         VersionText.Text = $"v{GetType().Assembly.GetName().Version?.ToString(3)} · Windows";
         Loaded += async (_, _) =>
         {
@@ -95,7 +96,10 @@ public partial class MainWindow : Window
         catch (Exception ex)
         {
             Log($"Could not read the workspace: {ex.Message}", BadBrush);
-            Log("Check Settings: the RepoBoss command and the workspace folder (create it with \"Create workspace\").");
+            if (ex.Message.Contains("No module named repoboss") || ex.Message.Contains("not found"))
+                Log("The RepoBoss CLI is not installed: open Settings and press \"Install RepoBoss CLI (pip)\".");
+            else
+                Log("Check Settings: the RepoBoss command and the workspace folder (create it with \"Create workspace\").");
         }
     }
 
@@ -396,6 +400,42 @@ public partial class MainWindow : Window
     void InitDocker_Click(object sender, RoutedEventArgs e) => _ = RunCli(new[] { "init", "--runner", "docker" }, LoadSettings);
     void InitLocal_Click(object sender, RoutedEventArgs e) => _ = RunCli(new[] { "init", "--runner", "local" }, LoadSettings);
     void Doctor_Click(object sender, RoutedEventArgs e) => _ = RunCli(new[] { "doctor" });
+
+    async void InstallCli_Click(object sender, RoutedEventArgs e)
+    {
+        var python = Backend.FindPython();
+        if (python == null)
+        {
+            MessageBox.Show(this, "Python 3.12+ was not found. Install it from python.org (check \"Add to PATH\"), then try again.", "RepoBoss");
+            return;
+        }
+        if (_running != null || Busy.IsIndeterminate) return;
+        LogBox.Clear();
+        Log($"$ {python} -m pip install --upgrade git+https://github.com/diegobruvhrpiugvjrigjtibjte/repoboss");
+        Busy.IsIndeterminate = true;
+        try
+        {
+            var code = await Backend.InstallCliAsync(python, line => Dispatcher.Invoke(() => Log(line)));
+            Log($"[finished, exit code {code}]");
+            if (code == 0)
+            {
+                _backend.Command = Backend.DetectCommand() ?? python;
+                CommandBox.Text = _backend.Command;
+                _settings.Command = _backend.Command;
+                _settings.Save();
+                Log("RepoBoss CLI installed. Now create a workspace with the buttons above.", OkBrush);
+                await LoadSettings();
+            }
+        }
+        catch (Exception ex)
+        {
+            Log("Installation failed: " + ex.Message, BadBrush);
+        }
+        finally
+        {
+            Busy.IsIndeterminate = false;
+        }
+    }
 
     async void SaveAgents_Click(object sender, RoutedEventArgs e)
     {
