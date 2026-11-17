@@ -1,0 +1,35 @@
+name: macOS app
+
+on:
+  push:
+    paths:
+      - "macos/**"
+      - ".github/workflows/macos.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+          swift --version
+      - name: Build RepoBoss.app
+        working-directory: macos
+        run: |
+          chmod +x build-app.sh
+          ./build-app.sh
+      - name: Package
+        working-directory: macos/build
+        run: ditto -c -k --keepParent RepoBoss.app RepoBoss-macOS.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RepoBoss-macOS
+          path: macos/build/RepoBoss-macOS.zip
+          if-no-files-found: error
